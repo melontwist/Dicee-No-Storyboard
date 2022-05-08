@@ -9,7 +9,29 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    private let topView: UIView = {
+        let view = UIView()
+        return view
+    }()
 
+    private let middleView: UIView = {
+        let view = UIView()
+        return view
+    }()
+
+    private let bottomView: UIView = {
+        let view = UIView()
+        return view
+    }()
+
+    lazy var stackView: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [topView, middleView, bottomView])
+        stack.axis = .vertical
+        stack.alignment = .fill
+        stack.distribution = .fillEqually
+        return stack
+    }()
+    
     private let backgroundImageView: UIImageView = {
        let imageView = UIImageView()
         imageView.image = UIImage(named: "GreenBackground")
@@ -35,6 +57,15 @@ class ViewController: UIViewController {
         return imageView
     }()
     
+    lazy var stackDice: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [leftDiceImageView, rightDiceImageView])
+        stack.axis = .horizontal
+        stack.alignment = .fill
+        stack.distribution = .fillEqually
+        stack.spacing = 65
+        return stack
+    }()
+    
     private lazy var rollButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Roll", for: .normal)
@@ -49,19 +80,19 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .red
-        
-        
+
         view.addSubview(backgroundImageView)
-        view.addSubview(logoImageView)
-        view.addSubview(leftDiceImageView)
-        view.addSubview(rightDiceImageView)
-        view.addSubview(rollButton)
         
+        view.addSubview(stackView)
+        topView.addSubview(logoImageView)
+        middleView.addSubview(stackDice)
+        bottomView.addSubview(rollButton)
+        
+       
+        stackDice.translatesAutoresizingMaskIntoConstraints = false
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         backgroundImageView.translatesAutoresizingMaskIntoConstraints = false
         logoImageView.translatesAutoresizingMaskIntoConstraints = false
-        leftDiceImageView.translatesAutoresizingMaskIntoConstraints = false
-        rightDiceImageView.translatesAutoresizingMaskIntoConstraints = false
         rollButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -72,34 +103,30 @@ class ViewController: UIViewController {
             backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             backgroundImageView.leftAnchor.constraint(equalTo: view.leftAnchor),
             
+            //Constraints for stackView
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            stackView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            stackView.leftAnchor.constraint(equalTo: view.leftAnchor),
+
             //Constraints for the logo image
-            logoImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 150),
-            logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            logoImageView.centerYAnchor.constraint(equalTo: topView.centerYAnchor),
+            logoImageView.centerXAnchor.constraint(equalTo: topView.centerXAnchor),
             
-            //Constraints for the left dice
-            leftDiceImageView.widthAnchor.constraint(equalToConstant: 120),
-            leftDiceImageView.heightAnchor.constraint(equalToConstant: 120),
-            leftDiceImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            leftDiceImageView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 50),
-            
-            
-            //Constraints for the right dice
-            rightDiceImageView.widthAnchor.constraint(equalToConstant: 120),
-            rightDiceImageView.heightAnchor.constraint(equalToConstant: 120),
-            rightDiceImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            rightDiceImageView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -50),
+            //Constraints for stackDice
+            stackDice.centerXAnchor.constraint(equalTo: middleView.centerXAnchor),
+            stackDice.centerYAnchor.constraint(equalTo: middleView.centerYAnchor),
             
             //Constraints for the roll button
             rollButton.widthAnchor.constraint(equalToConstant: 120),
             rollButton.heightAnchor.constraint(equalToConstant: 60),
-            rollButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            rollButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -150),
+            rollButton.centerXAnchor.constraint(equalTo: bottomView.centerXAnchor),
+            rollButton.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor),
      
         ])
         
     }
 
-    
     @objc func rollButtonPressed() {
         leftDiceImageView.image = diceArray.randomElement() as? UIImage
         rightDiceImageView.image = diceArray.randomElement() as? UIImage
